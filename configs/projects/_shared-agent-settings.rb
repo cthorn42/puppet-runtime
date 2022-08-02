@@ -170,6 +170,7 @@ proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{
 if platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
   proj.setting(:cppflags, "-I#{proj.includedir} -D_FORTIFY_SOURCE=2")
   proj.setting(:cflags, '-fstack-protector-strong -fno-plt -O2')
+  proj.package_override('# Disable check-rpaths since /opt/* is not a valid path\n%global __brp_check_rpaths %{nil}')
   proj.setting(:ldflags, "-L#{proj.libdir} -Wl,-rpath=#{proj.libdir},-z,relro,-z,now")
 end
 
