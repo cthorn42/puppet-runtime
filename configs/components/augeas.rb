@@ -37,6 +37,12 @@ component 'augeas' do |pkg, settings, platform|
       end
     end
 
+    if platform.is_macos?
+      pkg.build_requires 'autoconf'
+      pkg.build_requires 'automake'
+      pkg.build_requires 'libtool'
+    end
+
     extra_config_flags = platform.name =~ /solaris-11|aix/ ? " --disable-dependency-tracking" : ""
   end
 
@@ -116,6 +122,9 @@ component 'augeas' do |pkg, settings, platform|
     pkg.environment 'CPPFLAGS', settings[:cppflags]
     pkg.environment "LDFLAGS", settings[:ldflags]
   end
+
+  # fix libtool linking on big sur
+  pkg.configure { ["/usr/local/bin/autoreconf --force --install"] } if platform.is_macos?
 
   pkg.configure do
     ["./configure #{extra_config_flags} --prefix=#{settings[:prefix]} #{settings[:host]}"]
